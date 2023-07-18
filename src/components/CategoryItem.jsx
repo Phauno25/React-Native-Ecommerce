@@ -1,13 +1,18 @@
-import { Pressable, StyleSheet, Text } from "react-native";
+import { Pressable, StyleSheet } from "react-native";
 import React from "react";
 import Card from "./Card";
-import colors from "../global/colors";
+import globalStyles from "../global/globalStyles";
+import CustomText from "./CustomText";
 
-const CategoryItem = ({ category,setCategorySelected }) => {
+const CategoryItem = ({ category, navigation }) => {
   return (
-    <Pressable onPress={()=>setCategorySelected(category)}>
+    <Pressable
+      onPress={() =>
+        navigation.navigate("ItemListCategory", { category: category })
+      }
+    >
       <Card additionalStyle={styles.card}>
-        <Text style={styles.text}>{category}</Text>
+        <CustomText color={globalStyles.color.white} style={styles.text}>{category}</CustomText>
       </Card>
     </Pressable>
   );
@@ -17,12 +22,13 @@ export default CategoryItem;
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: colors.primary,
+    backgroundColor: globalStyles.color.primary,
     borderRadius: 12,
+    width: 250,
+    paddingVertical: 10,
+    paddingHorizontal: 15,
   },
   text: {
     fontSize: 22,
-    color: colors.white,
-    fontFamily: "Montserrat",
   },
 });

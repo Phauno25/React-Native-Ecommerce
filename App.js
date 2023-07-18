@@ -1,15 +1,16 @@
-import { StyleSheet } from "react-native";
-import Header from "./src/components/Header";
-import Home from "./src/screens/Home";
-import ItemListCategory from "./src/screens/ItemListCategory";
+
+
 import { useFonts } from "expo-font";
 import { useState } from "react";
+import Navigator from "./src/navigation/Navigator";
 
 export default function App() {
-  const [categorySelected, setCategorySelected] = useState();
-
+ 
   const [fontsLoaded] = useFonts({
-    Montserrat: require("./src/assets/fonts/Montserrat-Regular.ttf"),
+    'Montserrat': require("./src/assets/fonts/Montserrat-Regular.ttf"),
+    'MontserratSemiBold': require("./src/assets/fonts/Montserrat-SemiBold.ttf"),
+    'MontserratBold': require("./src/assets/fonts/Montserrat-Bold.ttf"),
+    'MontserratItalic': require("./src/assets/fonts/Montserrat-Italic.ttf"),
   });
 
   if (!fontsLoaded) {
@@ -17,25 +18,8 @@ export default function App() {
   }
 
   return (
-    <>
-      <Header title={categorySelected ? categorySelected : "Categories"} />
-      {categorySelected ? (
-        <ItemListCategory
-          categorySelected={categorySelected}
-          setCategorySelected={setCategorySelected}
-        />
-      ) : (
-        <Home setCategorySelected={setCategorySelected} />
-      )}
-    </>
+    <Navigator/>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    height: "100%",
-    alignItems: "center",
-    justifyContent: "center",
-    fontFamily: "Montserrat",
-  },
-});
+

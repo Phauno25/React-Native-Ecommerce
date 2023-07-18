@@ -1,30 +1,31 @@
-import { View, Text, StyleSheet, FlatList } from "react-native";
+import { View, StyleSheet, FlatList } from "react-native";
 import React, { useEffect, useState } from "react";
 import product from "../data/product.json";
 import Search from "../components/Search";
 import ProductItem from "../components/ProductItem";
-import colors from "../global/colors";
+import globalStyles from "../global/globalStyles";
 import validations from "../utils/validations";
+import CustomText from "../components/CustomText";
 
-const ItemListCategory = ({ categorySelected = "", setCategorySelected }) => {
+const ItemListCategory = ({ navigation, route }) => {
   const [products, setProducts] = useState([]);
   const [keyword, setKeyword] = useState("");
   const [keywordError, setKeywordError] = useState("");
-
+  const { category } = route.params;
   useEffect(() => {
     const productsFiltered = product.filter(
       (product) =>
-        product.category === categorySelected &&
+        product.category === category &&
         product.title.toLowerCase().includes(keyword.toLowerCase())
     );
     setProducts(productsFiltered);
-  }, [categorySelected, keyword]);
+  }, [category, keyword]);
 
   const onSearch = (input) => {
     const evaluation = validations.alphanumericspaces.test(input);
 
     if (evaluation) {
-      setKeyword(input);
+      setKeyword(input)
       setKeywordError("");
     } else {
       setKeywordError("Solo letras y números");
@@ -33,13 +34,9 @@ const ItemListCategory = ({ categorySelected = "", setCategorySelected }) => {
 
   return (
     <View style={styles.container}>
-      <Search
-        onSearch={onSearch}
-        error={keywordError}
-        goBack={() => setCategorySelected("")}
-      />
+      <Search onSearch={onSearch} error={keywordError}/>
       {products.length == 0 ? (
-        <Text style={styles.noResult}>Sin resultados </Text>
+        <CustomText style={styles.noResult}>Sin resultados </CustomText>
       ) : (
         ""
       )}
@@ -47,8 +44,12 @@ const ItemListCategory = ({ categorySelected = "", setCategorySelected }) => {
         contentContainerStyle={styles.flatlist}
         data={products}
         keyExtractor={(product) => product.id}
-        renderItem={({ item }) => ProductItem({ item })}
+        renderItem={({ item }) => (
+          <ProductItem product={item} navigation={navigation} />
+        )}
         showsVerticalScrollIndicator={false}
+        numColumns={2}
+        columnWrapperStyle={styles.centeredRow}
       />
     </View>
   );
@@ -60,15 +61,25 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     width: "100%",
-    justifyContent: "center",
-    alignContent: "center",
-    backgroundColor: colors.background,
+    backgroundColor: globalStyles.color.white,
   },
-  flatlist: { alignItems: "center", justifyContent: "center" },
+  content: {
+    paddingHorizontal: 12,
+  },
+  flatlist: {
+    alignItems: "center",
+    justifyContent: "center",
+    width: "100%",
+  },
   noResult: {
-    color: colors.white,
     fontSize: 24,
     paddingTop: 24,
     textAlign: "center",
+  },
+  centeredRow: {
+    alignItems: "center",
+    justifyContent: "space-evenly",
+    width: "100%",
+    gap: 5,
   },
 });
