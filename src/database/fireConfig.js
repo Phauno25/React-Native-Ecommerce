@@ -1,0 +1,1 @@
+export const realtime_database_url = 'https://react-native-coder-4cdb6-default-rtdb.firebaseio.com/'

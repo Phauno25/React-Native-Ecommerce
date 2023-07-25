@@ -1,9 +1,11 @@
 import { View, FlatList, StyleSheet } from "react-native";
 import React from "react";
-import categories from "../data/categories.json";
 import CategoryItem from "../components/CategoryItem";
 import globalStyles from "../global/globalStyles";
+import { useSelector } from "react-redux";
+
 const Home = ({ navigation }) => {
+  const categories = useSelector((state) => state.shopReducer.allCategories);
   return (
     <View style={styles.container}>
       <FlatList
@@ -11,10 +13,7 @@ const Home = ({ navigation }) => {
         data={categories}
         keyExtractor={(category) => category}
         renderItem={({ item }) => (
-          <CategoryItem
-            category={item}
-            navigation={navigation}
-          />
+          <CategoryItem category={item} navigation={navigation} />
         )}
       />
     </View>
@@ -31,7 +30,6 @@ const styles = StyleSheet.create({
     alignContent: "center",
     backgroundColor: globalStyles.color.white,
   },
-  flatlist: { alignItems: "center", justifyContent: "center" },
   headerText: {
     fontSize: 18,
     textAlign: "center",

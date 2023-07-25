@@ -6,26 +6,29 @@ import ProductItem from "../components/ProductItem";
 import globalStyles from "../global/globalStyles";
 import validations from "../utils/validations";
 import CustomText from "../components/CustomText";
+import { useSelector } from "react-redux";
 
-const ItemListCategory = ({ navigation, route }) => {
+const ItemListCategory = ({ navigation }) => {
   const [products, setProducts] = useState([]);
   const [keyword, setKeyword] = useState("");
   const [keywordError, setKeywordError] = useState("");
-  const { category } = route.params;
+
+  const productsSelected = useSelector(
+    (state) => state.shopReducer.productsSelected
+  );
+
   useEffect(() => {
-    const productsFiltered = product.filter(
-      (product) =>
-        product.category === category &&
-        product.title.toLowerCase().includes(keyword.toLowerCase())
+    const productsFiltered = productsSelected.filter((product) =>
+      product.title.toLowerCase().includes(keyword.toLowerCase())
     );
     setProducts(productsFiltered);
-  }, [category, keyword]);
+  }, [productsSelected, keyword]);
 
   const onSearch = (input) => {
     const evaluation = validations.alphanumericspaces.test(input);
 
     if (evaluation) {
-      setKeyword(input)
+      setKeyword(input);
       setKeywordError("");
     } else {
       setKeywordError("Solo letras y números");
@@ -34,9 +37,9 @@ const ItemListCategory = ({ navigation, route }) => {
 
   return (
     <View style={styles.container}>
-      <Search onSearch={onSearch} error={keywordError}/>
+      <Search onSearch={onSearch} error={keywordError} />
       {products.length == 0 ? (
-        <CustomText style={styles.noResult}>Sin resultados </CustomText>
+        <CustomText style={styles.noResult}>Sin resultados</CustomText>
       ) : (
         ""
       )}
@@ -47,7 +50,7 @@ const ItemListCategory = ({ navigation, route }) => {
         renderItem={({ item }) => (
           <ProductItem product={item} navigation={navigation} />
         )}
-        showsVerticalScrollIndicator={false}
+        showsVerticalScrollIndicator={true}
         numColumns={2}
         columnWrapperStyle={styles.centeredRow}
       />

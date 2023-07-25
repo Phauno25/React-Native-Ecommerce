@@ -1,18 +1,29 @@
-import { Image, Pressable, StyleSheet, View, useWindowDimensions } from "react-native";
+import {
+  Image,
+  Pressable,
+  StyleSheet,
+  View,
+  useWindowDimensions,
+} from "react-native";
 import React from "react";
 import Card from "./Card";
 import globalStyles from "../global/globalStyles";
 import { AntDesign } from "@expo/vector-icons";
 import CustomText from "./CustomText";
+import { useDispatch } from "react-redux";
+import { setProductSelected } from "../features/shop/shopSlice";
 
 const ProductItem = ({ product, navigation }) => {
+  const { width, height } = useWindowDimensions();
+  const dispatch = useDispatch();
 
-  const {width,height} = useWindowDimensions();
+  const handleProduct = () => {
+    dispatch(setProductSelected(product));
+    navigation.navigate("ItemDetail");
+  };
+
   return (
-    <Pressable
-      style={styles.pressable}
-      onPress={() => navigation.navigate("ItemDetail", { id: product.id })}
-    >
+    <Pressable style={styles.pressable} onPress={handleProduct}>
       <Card additionalStyle={width > 350 ? styles.card : styles.cardSM}>
         <Image
           resizeMode="cover"
@@ -21,8 +32,13 @@ const ProductItem = ({ product, navigation }) => {
         />
         <View style={styles.cardContent}>
           <View>
-            <CustomText style={width <= 350 ? styles.textSM : ""}>{product.brand}</CustomText>
-            <CustomText color="textPrimary" style={width > 350 ? styles.textTitle : styles.textTitleSM}>
+            <CustomText style={width <= 350 ? styles.textSM : ""}>
+              {product.brand}
+            </CustomText>
+            <CustomText
+              color="textPrimary"
+              style={width > 350 ? styles.textTitle : styles.textTitleSM}
+            >
               {product.title}
             </CustomText>
           </View>
@@ -99,7 +115,7 @@ const styles = StyleSheet.create({
   priceNotDiscount: {
     textDecorationLine: "line-through",
   },
-  textSM:{
-    fontSize:12,
-  }
+  textSM: {
+    fontSize: 12,
+  },
 });

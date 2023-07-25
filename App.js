@@ -1,16 +1,14 @@
-
-
 import { useFonts } from "expo-font";
-import { useState } from "react";
 import Navigator from "./src/navigation/Navigator";
+import { Provider } from "react-redux";
+import store from "./src/store/store";
 
 export default function App() {
- 
   const [fontsLoaded] = useFonts({
-    'Montserrat': require("./src/assets/fonts/Montserrat-Regular.ttf"),
-    'MontserratSemiBold': require("./src/assets/fonts/Montserrat-SemiBold.ttf"),
-    'MontserratBold': require("./src/assets/fonts/Montserrat-Bold.ttf"),
-    'MontserratItalic': require("./src/assets/fonts/Montserrat-Italic.ttf"),
+    Montserrat: require("./src/assets/fonts/Montserrat-Regular.ttf"),
+    MontserratSemiBold: require("./src/assets/fonts/Montserrat-SemiBold.ttf"),
+    MontserratBold: require("./src/assets/fonts/Montserrat-Bold.ttf"),
+    MontserratItalic: require("./src/assets/fonts/Montserrat-Italic.ttf"),
   });
 
   if (!fontsLoaded) {
@@ -18,8 +16,8 @@ export default function App() {
   }
 
   return (
-    <Navigator/>
+    <Provider store={store}>
+      <Navigator />
+    </Provider>
   );
 }
-
-

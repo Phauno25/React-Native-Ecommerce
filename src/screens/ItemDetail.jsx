@@ -1,15 +1,28 @@
-import { StyleSheet, Text, View, Image, Pressable, useWindowDimensions } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  Pressable,
+  useWindowDimensions,
+} from "react-native";
 import React from "react";
 import { AntDesign } from "@expo/vector-icons";
 import globalStyles from "../global/globalStyles";
-import useProduct from "../hooks/useProduct";
 import CustomText from "../components/CustomText";
+import { useDispatch, useSelector } from "react-redux";
+import { addToCart } from "../features/cart/cartSlice";
 
-const ItemDetail = ({ navigation, route }) => {
-  //Acá cree un custom hook para que el componente solo se dedique a mostrar la data y no a fetchearla también.
-  const { id } = route.params;
-  const { product } = useProduct(id);
-  const {width,height} = useWindowDimensions();
+const ItemDetail = () => {
+  const { width, height } = useWindowDimensions();
+  const product = useSelector((state) => state.shopReducer.productSelected);
+  const cart = useSelector((state) => state.cartReducer.cart);
+  const test = cart.find(e=> e.product.id === product.id); 
+ const dispatch = useDispatch();
+
+  const handleAddCart = () => {
+    dispatch(addToCart(product));
+  };
 
   return (
     <>
@@ -23,7 +36,10 @@ const ItemDetail = ({ navigation, route }) => {
           <View style={width > 350 ? styles.content : styles.contentSM}>
             <View>
               <CustomText>{product.category}</CustomText>
-              <CustomText color="textPrimary" style={width > 350 ? styles.textTitle : styles.textTitleSM}>
+              <CustomText
+                color="textPrimary"
+                style={width > 350 ? styles.textTitle : styles.textTitleSM}
+              >
                 {product.title}
               </CustomText>
               <View style={styles.specsBarView}>
@@ -40,19 +56,33 @@ const ItemDetail = ({ navigation, route }) => {
               </View>
             </View>
 
-            <CustomText style={width > 350 ?styles.textDescription : styles.textDescriptionSM}>
+            <CustomText
+              style={
+                width > 350 ? styles.textDescription : styles.textDescriptionSM
+              }
+            >
               {product.description}
             </CustomText>
             <View style={styles.priceView}>
               <View style={styles.centeredView}>
-                <CustomText variant="bold" color="textPrimary" style={styles.totalPrice}>Total Price:</CustomText>
+                <CustomText
+                  variant="bold"
+                  color="textPrimary"
+                  style={styles.totalPrice}
+                >
+                  Total Price:
+                </CustomText>
                 <CustomText style={styles.priceNotDiscount}>
                   $
                   {parseFloat(
                     (100 * product.price) / (100 - product.discountPercentage)
                   ).toFixed(2)}
                 </CustomText>
-                <CustomText variant="bold"  color="textPrimary" style={styles.textTitle}>
+                <CustomText
+                  variant="bold"
+                  color="textPrimary"
+                  style={styles.textTitle}
+                >
                   ${parseFloat(product.price).toFixed(2)}
                 </CustomText>
               </View>
@@ -60,8 +90,14 @@ const ItemDetail = ({ navigation, route }) => {
                 <CustomText style={styles.discountPercentage}>
                   {product.discountPercentage}% OFF!
                 </CustomText>
-                <Pressable style={styles.buyButton}>
-                  <CustomText variant="bold" color={globalStyles.color.white} style={styles.buyButtonText}>Add to Cart</CustomText>
+                <Pressable style={styles.buyButton} onPress={handleAddCart}>
+                  <CustomText
+                    variant="bold"
+                    color={globalStyles.color.white}
+                    style={styles.buyButtonText}
+                  >
+                   { test ? `On cart (${test.quantity})` : "Add to Cart"}
+                  </CustomText>
                 </Pressable>
               </View>
             </View>
@@ -89,11 +125,11 @@ const styles = StyleSheet.create({
   },
   content: {
     justifyContent: "space-between",
-    height:"50%"
+    height: "50%",
   },
   contentSM: {
     justifyContent: "space-between",
-    height:"70%"
+    height: "70%",
   },
   card: {},
   image: {
@@ -115,12 +151,12 @@ const styles = StyleSheet.create({
   textDescription: {
     fontSize: 14,
     lineHeight: 20,
-    paddingBottom:6
+    paddingBottom: 6,
   },
   textDescriptionSM: {
     fontSize: 12,
     lineHeight: 14,
-    paddingBottom:3
+    paddingBottom: 3,
   },
   ratingView: {
     flexDirection: "row",
@@ -146,7 +182,7 @@ const styles = StyleSheet.create({
   },
   buyButtonText: {
     textAlign: "center",
-    fontSize:18
+    fontSize: 18,
   },
   centeredView: {
     width: "50%",
@@ -155,7 +191,7 @@ const styles = StyleSheet.create({
     textDecorationLine: "line-through",
     fontFamily: "MontserratSemiBold",
   },
-  discountPercentage:{
-    textAlign:"center"
-  }
+  discountPercentage: {
+    textAlign: "center",
+  },
 });
