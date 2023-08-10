@@ -1,28 +1,33 @@
 import { View, StyleSheet, FlatList } from "react-native";
 import React, { useEffect, useState } from "react";
-import product from "../data/product.json";
 import Search from "../components/Search";
 import ProductItem from "../components/ProductItem";
 import globalStyles from "../global/globalStyles";
 import validations from "../utils/validations";
 import CustomText from "../components/CustomText";
 import { useSelector } from "react-redux";
+import { useGetProductsByCategoryQuery } from "../services/shopServices";
 
 const ItemListCategory = ({ navigation }) => {
-  const [products, setProducts] = useState([]);
   const [keyword, setKeyword] = useState("");
   const [keywordError, setKeywordError] = useState("");
+  const [products,setProducts] = useState([]);
+  
 
   const productsSelected = useSelector(
     (state) => state.shopReducer.productsSelected
   );
+  const categorySelected = useSelector(
+    (state) => state.shopReducer.categorySelected
+  );
+  const {data: productsFiltered,isError,isLoading} = useGetProductsByCategoryQuery(categorySelected)
 
   useEffect(() => {
     const productsFiltered = productsSelected.filter((product) =>
       product.title.toLowerCase().includes(keyword.toLowerCase())
     );
     setProducts(productsFiltered);
-  }, [productsSelected, keyword]);
+  }, [keyword]);
 
   const onSearch = (input) => {
     const evaluation = validations.alphanumericspaces.test(input);

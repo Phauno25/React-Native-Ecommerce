@@ -3,9 +3,12 @@ import React from "react";
 import CategoryItem from "../components/CategoryItem";
 import globalStyles from "../global/globalStyles";
 import { useSelector } from "react-redux";
+import { useGetCategoriesQuery } from "../services/shopServices";
 
 const Home = ({ navigation }) => {
-  const categories = useSelector((state) => state.shopReducer.allCategories);
+
+  const {data:categories,isLoading,isError} = useGetCategoriesQuery();
+  
   return (
     <View style={styles.container}>
       <FlatList

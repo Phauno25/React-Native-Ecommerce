@@ -17,11 +17,12 @@ const ItemDetail = () => {
   const { width, height } = useWindowDimensions();
   const product = useSelector((state) => state.shopReducer.productSelected);
   const cart = useSelector((state) => state.cartReducer.cart);
-  const test = cart.find(e=> e.product.id === product.id); 
+  const user = useSelector(state=>state.userReducer.value.email)
+  const test = cart.items.find(e=> e.product.id === product.id); 
  const dispatch = useDispatch();
 
   const handleAddCart = () => {
-    dispatch(addToCart(product));
+    dispatch(addToCart({...product,quantity:1,user:user}));
   };
 
   return (

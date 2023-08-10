@@ -25,6 +25,21 @@ const Header = ({ route, navigation, isBackVisible }) => {
   if (route.name === "ItemDetail") {
     title = "Product detail";
   }
+  if (route.name === "CartMain") {
+    title = "My Cart";
+  }
+  if (route.name === "OrderMain") {
+    title = "My Orders";
+  }
+  if (route.name === "ProfileMain") {
+    title = "My Profile";
+  }
+  if (route.name === "ImageSelector") {
+    title = "My avatar";
+  }
+  if (route.name === "LocationSelector") {
+    title = "My Address";
+  }
   return (
     <>
       <View style={width <= 350 ? styles.containerSM : styles.container}>

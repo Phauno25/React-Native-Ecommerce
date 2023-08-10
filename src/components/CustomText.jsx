@@ -10,9 +10,13 @@ const CustomText = ({
   color = "default",
   style = {},
   children,
+  fontSize = null,
+  textAlign = "left",
 }) => {
   const variantStyle = styles[variant] ? styles[variant] : styles["semiBold"];
   const [colorStyle, setColorStyle] = useState({});
+  const fontSizeStyle = fontSize ? { fontSize: fontSize } : "";
+  const textAlignStyle = { textAlign: textAlign };
 
   useEffect(() => {
     switch (color) {
@@ -30,6 +34,9 @@ const CustomText = ({
       case "textSecondary":
         setColorStyle({ color: globalStyles.color.textSecondary });
         break;
+      case "white":
+        setColorStyle({ color: globalStyles.color.white });
+        break;
 
       default:
         if (color.startsWith("#")) {
@@ -42,7 +49,16 @@ const CustomText = ({
   }, []);
 
   return (
-    <Text style={[styles.baseText, variantStyle, colorStyle, style]}>
+    <Text
+      style={[
+        styles.baseText,
+        variantStyle,
+        colorStyle,
+        fontSizeStyle,
+        textAlignStyle,
+        style,
+      ]}
+    >
       {children}
     </Text>
   );
@@ -61,5 +77,6 @@ const styles = StyleSheet.create({
   semiBold: {
     fontFamily: "MontserratSemiBold",
   },
+  link: { color: "blue", textDecorationLine: "underline" },
   regular: {},
 });

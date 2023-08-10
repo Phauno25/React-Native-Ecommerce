@@ -27,7 +27,7 @@ const CartItem = ({ cartItem }) => {
         <CustomText style={styles.title}>{cartItem.product.title}</CustomText>
         <CustomText style={styles.title}>
           x {cartItem.quantity} | $
-          {parseFloat(cartItem.product.price * cartItem.quantity).toFixed(2)}
+          {parseFloat(cartItem.product.price).toFixed(2)}
         </CustomText>
         <CustomText style={styles.title}>
           ${parseFloat(cartItem.product.price * cartItem.quantity).toFixed(2)}
