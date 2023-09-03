@@ -13,10 +13,15 @@ import CustomText from "./CustomText";
 import { useDispatch } from "react-redux";
 import { setProductSelected } from "../features/shop/shopSlice";
 
-const ProductItem = ({ product, navigation }) => {
-  const { width, height } = useWindowDimensions();
-  const dispatch = useDispatch();
+/*Componente utilizado para mostrar los productos de una categoria*/
 
+const ProductItem = ({ product, navigation }) => {
+
+  /*Hooks*/
+  const dispatch = useDispatch();
+  const { width } = useWindowDimensions();
+
+  /*Handler de eventos*/
   const handleProduct = () => {
     dispatch(setProductSelected(product));
     navigation.navigate("ItemDetail");
@@ -32,13 +37,10 @@ const ProductItem = ({ product, navigation }) => {
         />
         <View style={styles.cardContent}>
           <View>
-            <CustomText style={width <= 350 ? styles.textSM : ""}>
+            <CustomText color="primary" fontSize={width <= 350 ? 12 : ""}>
               {product.brand}
             </CustomText>
-            <CustomText
-              color="textPrimary"
-              style={width > 350 ? styles.textTitle : styles.textTitleSM}
-            >
+            <CustomText fontSize={width > 350 ? 16 : 14} style={styles.mb4}>
               {product.title}
             </CustomText>
           </View>
@@ -53,15 +55,13 @@ const ProductItem = ({ product, navigation }) => {
               <CustomText>{parseFloat(product.rating).toFixed(2)}</CustomText>
             </View>
             <View>
-              <CustomText style={styles.priceNotDiscount}>
+              <CustomText color="primary" style={styles.priceNotDiscount}>
                 $
                 {parseFloat(
                   (100 * product.price) / (100 - product.discountPercentage)
                 ).toFixed(2)}
               </CustomText>
-              <CustomText color="primary">
-                ${parseFloat(product.price).toFixed(2)}
-              </CustomText>
+              <CustomText>${parseFloat(product.price).toFixed(2)}</CustomText>
             </View>
           </View>
         </View>
@@ -80,14 +80,15 @@ const styles = StyleSheet.create({
     padding: 5,
   },
   card: {
-    backgroundColor: globalStyles.color.background,
+    backgroundColor: globalStyles.color.surface,
     width: "95%",
     height: 260,
+    borderRadius: 12,
   },
   cardSM: {
-    backgroundColor: globalStyles.color.background,
+    backgroundColor: globalStyles.color.surface,
     width: "95%",
-    height: 260,
+    height: 215,
   },
   cardContent: {
     justifyContent: "space-between",
@@ -103,19 +104,12 @@ const styles = StyleSheet.create({
   image: {
     height: 115,
     width: "100%",
+    borderRadius: 12,
   },
-  textTitle: {
-    fontSize: 16,
-    marginBottom: 4,
-  },
-  textTitleSM: {
-    fontSize: 14,
+  mb4: {
     marginBottom: 4,
   },
   priceNotDiscount: {
     textDecorationLine: "line-through",
-  },
-  textSM: {
-    fontSize: 12,
   },
 });

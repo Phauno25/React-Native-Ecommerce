@@ -1,11 +1,21 @@
-import { Image, Pressable, StyleSheet, View } from "react-native";
-import { useSelector } from "react-redux";
+import { Image, StyleSheet, View, useWindowDimensions } from "react-native";
+import { useDispatch, useSelector } from "react-redux";
 import CustomText from "../components/CustomText";
 import globalStyles from "../global/globalStyles";
+import CustomButton from "../components/CustomButton";
+import Container from "../components/Container";
+import { deleteSession } from "../database";
+import { useState } from "react";
+import { logOut } from "../features/user/userSlice";
 
 const Profile = ({ navigation }) => {
+  /*Hooks*/
+  const dispatch = useDispatch();
   const user = useSelector((state) => state.userReducer.value);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const { width } = useWindowDimensions();
 
+  /*Handlers de eventos*/
   const launchCamera = () => {
     navigation.navigate("ImageSelector");
   };
@@ -14,52 +24,78 @@ const Profile = ({ navigation }) => {
     navigation.navigate("LocationSelector");
   };
 
-  return (
-    <View style={styles.container}>
-      <View style={styles.area}>
-        <CustomText fontSize={18}>{user.email}</CustomText>
-        {user.profileImage ? (
-          <Image source={{ uri: user.profileImage }} style={styles.image} />
-        ) : (
-          <>
-            <Image  source={require("../assets/img/defaultProfile.jpg")} style={styles.image} />
-          </>
-        )}
-        <Pressable onPress={launchCamera}>
-          <CustomText variant="link">
-            {user.profileImage ? "Change Avatar" : "Add Avatar"}
-          </CustomText>
-        </Pressable>
-      </View>
-      <View style={styles.area}>
-        <CustomText fontSize={18}>My Shiping Address</CustomText>
-        <CustomText color="textPrimary" fontSize={14}>{user.location?.address ? user.location.address: "No address found"}</CustomText>
+  const logoutUser = () => {
+    setIsLoggingOut(true);
+    deleteSession(user.localId).then(() => dispatch(logOut(user.localId)));
+  };
 
-        <Pressable onPress={launchAdress}>
-          <CustomText variant="link">{user.location?.address ? "Change Address": "Add Address"}</CustomText>
-        </Pressable>
-      </View>
-    </View>
+  return (
+    <Container
+      style={width <= 350 ? [styles.gap24, styles.pb12] : styles.gap24}
+      variant={width <= 350 ? "scrollView" : "view"}
+    >
+      {isLoggingOut ? (
+        <CustomText textAlign="center">
+          Logging out... Come back soon!
+        </CustomText>
+      ) : (
+        <>
+          <View style={styles.area}>
+            <CustomText fontSize={18}>{user.email}</CustomText>
+            {user.profileImage ? (
+              <Image source={{ uri: user.profileImage }} style={styles.image} />
+            ) : (
+              <>
+                <Image
+                  source={require("../assets/img/defaultProfile.jpg")}
+                  style={styles.image}
+                />
+              </>
+            )}
+            <CustomButton onPress={launchCamera}>
+              {user.profileImage ? "Change Avatar" : "Add Avatar"}
+            </CustomButton>
+          </View>
+          <View style={styles.area}>
+            <CustomText fontSize={18}>My Shiping Address</CustomText>
+            <CustomText fontSize={14}>
+              {user.location?.address
+                ? user.location.address
+                : "No address found"}
+            </CustomText>
+
+            <CustomButton onPress={launchAdress}>
+              {user.location?.address ? "Change Address" : "Add Address"}
+            </CustomButton>
+          </View>
+
+          <View style={styles.area}>
+            <CustomText fontSize={18}>Close Session</CustomText>
+            <CustomButton onPress={logoutUser}>Log Out</CustomButton>
+          </View>
+        </>
+      )}
+    </Container>
   );
 };
 
 export default Profile;
 
 const styles = StyleSheet.create({
-  container: {
-    width: "100%",
-    flex: 1,
-    alignItems: "center",
-    gap: 12,
-    backgroundColor: globalStyles.color.white,
+  gap24: {
+    gap: 24,
+  },
+  pb12: {
+    paddingBottom: 12,
   },
   area: {
     alignItems: "center",
     gap: 12,
-    paddingVertical:12,
-    paddingHorizontal:6,
+    paddingVertical: 12,
+    paddingHorizontal: 6,
     width: "80%",
-    backgroundColor: globalStyles.color.background,
+    backgroundColor: globalStyles.color.surface,
+    borderRadius: 12,
   },
   image: { width: 100, height: 100 },
   buyButton: {

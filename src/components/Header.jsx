@@ -1,21 +1,23 @@
-import {
-  View,
-  StyleSheet,
-  Pressable,
-  Modal,
-  useWindowDimensions,
-} from "react-native";
-import React, { useState } from "react";
+import { View, StyleSheet, Pressable, useWindowDimensions } from "react-native";
+import React from "react";
 import globalStyles from "../global/globalStyles";
 import { Ionicons } from "@expo/vector-icons";
 import CustomText from "./CustomText";
 import { useSelector } from "react-redux";
 
 const Header = ({ route, navigation, isBackVisible }) => {
-  const [isCartOpen, setIsCartOpen] = useState(false);
-  const { width, height } = useWindowDimensions();
-  const category = useSelector((state) => state.shopReducer.categorySelected);
+
+  /*Vars*/
   let title;
+  const justifyStyle = isBackVisible
+  ? { justifyContent: "space-between" }
+  : { justifyContent: "center" };
+  /*Hooks y Reducers*/
+  const { width } = useWindowDimensions();
+  const category = useSelector((state) => state.shopReducer.categorySelected);
+
+
+  /*Cambiams el valor de la variable en base a donde nos ubiquemos en la app*/
   if (route.name === "Home") {
     title = "Home";
   }
@@ -40,71 +42,54 @@ const Header = ({ route, navigation, isBackVisible }) => {
   if (route.name === "LocationSelector") {
     title = "My Address";
   }
-  return (
-    <>
-      <View style={width <= 350 ? styles.containerSM : styles.container}>
-        {isBackVisible ? (
-          <Pressable onPress={() => navigation.goBack()}>
-            <Ionicons
-              name="arrow-back"
-              size={24}
-              color={globalStyles.color.black}
-            />
-          </Pressable>
-        ) : (
-          <View />
-        )}
 
-        <CustomText style={width <= 350 ? styles.textSM : styles.text}>
-          {title}
-        </CustomText>
-      </View>
-      <Modal
-        onRequestClose={() => setIsCartOpen(!isCartOpen)}
-        visible={isCartOpen}
-      >
-        <CustomText>
-          Hola Diego. No llegue a hacer esta seccion pero cuando veamos redux lo
-          voy a terminar!
-        </CustomText>
-        <Pressable onPress={() => setIsCartOpen(false)}>
-          <CustomText color="primary">Cerrar modal?</CustomText>
+  return (
+    <View style={[styles.navBar, justifyStyle]}>
+      {isBackVisible && (
+        <Pressable onPress={() => navigation.goBack()}>
+          <Ionicons
+            name="arrow-back"
+            size={width <= 350 ? 14 : 26}
+            color={globalStyles.color.textPrimary}
+          />
         </Pressable>
-      </Modal>
-    </>
+      )}
+
+      <CustomText
+        textAlign="center"
+        fontSize={width <= 350 ? 14 : 20}
+        style={width <= 350 ? styles.textSM : styles.text}
+      >
+        {title}
+      </CustomText>
+      {isBackVisible && (
+        <View>
+          <Ionicons
+            name="arrow-back"
+            size={width <= 350 ? 24 : 14}
+            color={globalStyles.color.background}
+          />
+        </View>
+      )}
+    </View>
   );
 };
 
 export default Header;
 
 const styles = StyleSheet.create({
-  container: {
+  navBar: {
     width: "100%",
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 12,
     flexDirection: "row",
-    justifyContent: "flex-start",
-    backgroundColor: globalStyles.color.white,
-  },
-  containerSM: {
-    width: "100%",
-    justifyContent: "center",
     alignItems: "center",
+    gap: 12,
     padding: 6,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    backgroundColor: globalStyles.color.white,
+    backgroundColor: globalStyles.color.background,
   },
   text: {
-    fontSize: 20,
-    textAlign: "center",
     paddingBottom: 6,
-    marginLeft: "5%"
   },
   textSM: {
-    fontSize: 14,
-    textAlign: "center",
     paddingBottom: 3,
   },
 });

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import {
   StyleSheet,
   SafeAreaView,
@@ -17,132 +17,170 @@ import OrderStack from "./OrderStack";
 import AuthStack from "./AuthStack";
 import { useDispatch, useSelector } from "react-redux";
 import ProfileStack from "./ProfileStack";
-import { useGetProfileImageQuery, useGetProfileLocationQuery } from "../services/shopServices";
-import { setProfileLocation, setProfilePic } from "../features/user/userSlice";
+import {
+  useGetProfileImageQuery,
+  useGetProfileLocationQuery,
+} from "../services/shopServices";
+import {
+  setProfileLocation,
+  setProfilePic,
+  setUserSession,
+} from "../features/user/userSlice";
+import CustomText from "../components/CustomText";
+import useCategory from "../hooks/useCategory";
+import useProduct from "../hooks/useProduct";
+import { getSession } from "../database";
 
 const Tab = createBottomTabNavigator();
 
 const Navigator = () => {
-  const { email, localId } = useSelector((state) => state.userReducer.value);
+
+  /*Hooks*/
   const dispatch = useDispatch();
-  const { data, error, loading } = useGetProfileImageQuery(localId);
+  const { loading: loadingCategories } = useCategory();
+  const { loading: loadingProducts } = useProduct();
+  const { email, localId } = useSelector((state) => state.userReducer.value);
+  const { data: profileImg, error, loading } = useGetProfileImageQuery(localId);
   const { data: location } = useGetProfileLocationQuery(localId);
 
 
-  useEffect(() =>{
-    if (data) {
-      dispatch(setProfilePic(data.image))
-    }
-  },[data])
-  useEffect(() =>{
-    if (location) {
-      console.log(location.location)
-      dispatch(setProfileLocation(location.location))
-    }
-  },[location])
+  useEffect(() => {
+    /*BUscamos una sesion guardada en la db SQLITE cuando se inicia el componente*/
+    (async () => {
+      try {
+        console.log("Getting session...");
+        const session = await getSession();
+        if (session?.rows.length) {
+          const user = session.rows._array[0];
+          dispatch(setUserSession(user));
+        }
+      } catch (error) {
+        console.log("Error getting session");
+        console.log(error.message);
+      }
+    })();
+  }, []);
 
+  useEffect(() => {
+    /*Obtenemos foto de perfil del usuario*/
+    if (profileImg) {
+      dispatch(setProfilePic(profileImg.image));
+    }
+  }, [profileImg]);
+
+  useEffect(() => {
+    /*Obtenemos la direccion del usuario*/
+    if (location) {
+      dispatch(setProfileLocation(location.location));
+    }
+  }, [location]);
 
   return (
     <SafeAreaView style={styles.container}>
-      <NavigationContainer>
-        {email ? (
-          <Tab.Navigator
-            initialRouteName="Home"
-            screenOptions={{ headerShown: false }}
-          >
-            <Tab.Screen
-              name="Shop"
-              component={ShopStack}
-              options={{
-                tabBarLabel: "Shop",
-                tabBarIcon: ({ focused }) => {
-                  return (
-                    <View>
-                      <FontAwesome5
-                        name="store"
-                        size={24}
-                        color={
-                          focused
-                            ? globalStyles.color.primary
-                            : globalStyles.color.black
-                        }
-                      />
-                    </View>
-                  );
-                },
-              }}
-            />
-            <Tab.Screen
-              name="Cart"
-              component={CartStack}
-              options={{
-                tabBarLabel: "My Cart",
-                tabBarIcon: ({ focused }) => {
-                  return (
-                    <View>
-                      <MaterialIcons
-                        name="shopping-cart"
-                        size={24}
-                        color={
-                          focused
-                            ? globalStyles.color.primary
-                            : globalStyles.color.black
-                        }
-                      />
-                    </View>
-                  );
-                },
-              }}
-            />
-            <Tab.Screen
-              name="Order"
-              component={OrderStack}
-              options={{
-                tabBarLabel: "My Orders",
-                tabBarIcon: ({ focused }) => {
-                  return (
-                    <View>
-                      <FontAwesome5
-                        name="list-ul"
-                        size={24}
-                        color={
-                          focused
-                            ? globalStyles.color.primary
-                            : globalStyles.color.black
-                        }
-                      />
-                    </View>
-                  );
-                },
-              }}
-            />
-            <Tab.Screen
-              name="Profile"
-              component={ProfileStack}
-              options={{
-                tabBarLabel: "Profile",
-                tabBarIcon: ({ focused }) => {
-                  return (
-                    <View>
-                      <MaterialIcons
-                        name="person"
-                        size={24}
-                        color={
-                          focused
-                            ? globalStyles.color.primary
-                            : globalStyles.color.black
-                        }
-                      />
-                    </View>
-                  );
-                },
-              }}
-            />
-          </Tab.Navigator>
-        ) : (
-          <AuthStack />
-        )}
-      </NavigationContainer>
+      {/*Mostramos los stacks correspondientes una vez que tengamos los datos de los productos y categorias en redux*/}
+      {loadingCategories || loadingProducts ? (
+        <CustomText>Loading Store...</CustomText>
+      ) : (
+        <NavigationContainer>
+          {email ? (
+            <Tab.Navigator
+              initialRouteName="Home"
+              screenOptions={{ headerShown: false, tabBarStyle: styles.tabBar }}
+            >
+              <Tab.Screen
+                name="Shop"
+                component={ShopStack}
+                options={{
+                  tabBarLabel: "Shop",
+                  tabBarIcon: ({ focused }) => {
+                    return (
+                      <View>
+                        <FontAwesome5
+                          name="store"
+                          size={24}
+                          color={
+                            focused
+                              ? globalStyles.color.primary
+                              : globalStyles.color.textPrimary
+                          }
+                        />
+                      </View>
+                    );
+                  },
+                }}
+              />
+              <Tab.Screen
+                name="Cart"
+                component={CartStack}
+                options={{
+                  tabBarLabel: "My Cart",
+                  tabBarIcon: ({ focused }) => {
+                    return (
+                      <View>
+                        <MaterialIcons
+                          name="shopping-cart"
+                          size={24}
+                          color={
+                            focused
+                              ? globalStyles.color.primary
+                              : globalStyles.color.textPrimary
+                          }
+                        />
+                      </View>
+                    );
+                  },
+                }}
+              />
+              <Tab.Screen
+                name="Order"
+                component={OrderStack}
+                options={{
+                  tabBarLabel: "My Orders",
+                  tabBarIcon: ({ focused }) => {
+                    return (
+                      <View>
+                        <FontAwesome5
+                          name="list-ul"
+                          size={24}
+                          color={
+                            focused
+                              ? globalStyles.color.primary
+                              : globalStyles.color.textPrimary
+                          }
+                        />
+                      </View>
+                    );
+                  },
+                }}
+              />
+              <Tab.Screen
+                name="Profile"
+                component={ProfileStack}
+                options={{
+                  tabBarLabel: "Profile",
+                  tabBarIcon: ({ focused }) => {
+                    return (
+                      <View>
+                        <MaterialIcons
+                          name="person"
+                          size={24}
+                          color={
+                            focused
+                              ? globalStyles.color.primary
+                              : globalStyles.color.textPrimary
+                          }
+                        />
+                      </View>
+                    );
+                  },
+                }}
+              />
+            </Tab.Navigator>
+          ) : (
+            <AuthStack />
+          )}
+        </NavigationContainer>
+      )}
     </SafeAreaView>
   );
 };
@@ -153,5 +191,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
+  },
+  tabBar: {
+    backgroundColor: globalStyles.color.background,
   },
 });

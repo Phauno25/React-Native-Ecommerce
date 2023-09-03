@@ -1,50 +1,39 @@
-import { StyleSheet, Text, TextInput, View } from 'react-native'
-import React, { useState } from 'react'
-import globalStyles from '../global/globalStyles';
-
-const InputForm = ({
-    label, 
-    onChange, 
-    error = "",
-    isSecure = false
-}) => {
-    const [input, setInput] = useState("");
-    const onChangeText = (text) => {
-        setInput(text)
-        onChange(text)
-    }
+import { StyleSheet, TextInput, View } from "react-native";
+import React, { useState } from "react";
+import CustomText from "./CustomText";
+const InputForm = ({ label, onChange, error = "", isSecure = false }) => {
+  /*States*/
+  const [input, setInput] = useState("");
+  /*Handler de eventos*/
+  const onChangeText = (text) => {
+    setInput(text);
+    onChange(text);
+  };
   return (
     <View style={styles.inputContainer}>
-      <Text style={styles.subtitle}>{label}</Text>
+      <CustomText>{label}</CustomText>
       <TextInput
-        style ={styles.input}
+        style={styles.input}
         value={input}
         onChangeText={onChangeText}
         secureTextEntry={isSecure}
       />
-      {error ? 
-        <Text style = {styles.error}>
-            {error}
-        </Text>
-        :
-        null
-    }
+      {error ? <CustomText style={styles.error}>{error}</CustomText> : null}
     </View>
-  )
-}
+  );
+};
 
-export default InputForm
+export default InputForm;
 
 const styles = StyleSheet.create({
-    inputContainer: {
-        flexDirection: 'column',
-        justifyContent: 'flex-start',
-        alignItems: 'center',
-        width: '100%'
-    },
-    error: {
-        fontSize: 16,
-        color: 'red',
-        fontStyle: 'italic',
-    },
-})
+  inputContainer: {
+    flexDirection: "column",
+    justifyContent: "flex-start",
+    alignItems: "center",
+    width: "100%",
+  },
+  error: {
+    color: "red",
+    fontStyle: "italic",
+  },
+});

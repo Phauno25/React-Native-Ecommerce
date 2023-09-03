@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Pressable, StyleSheet, Text, View, Image } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { setProfileLocation } from "../features/user/userSlice";
 import { usePostProfileLocationMutation } from "../services/shopServices";
@@ -11,14 +11,17 @@ import MapPreview from "../components/MapPreview";
 import { maps_api_key } from "../database/fireConfig";
 import globalStyles from "../global/globalStyles";
 import CustomText from "../components/CustomText";
+import Container from "../components/Container";
+import CustomButton from "../components/CustomButton";
 
 const LocationSelector = ({ navigation }) => {
+  /*Hooks*/
+  const dispatch = useDispatch();
   const [location, setLocation] = useState(null);
   const [address, setAddress] = useState("");
   const [error, setError] = useState("");
   const { localId } = useSelector((state) => state.userReducer.value);
   const [triggerSaveProfileLocation, result] = usePostProfileLocationMutation();
-  const dispatch = useDispatch();
 
   useEffect(() => {
     (async () => {
@@ -44,7 +47,7 @@ const LocationSelector = ({ navigation }) => {
   useEffect(() => {
     (async () => {
       try {
-        if (location.latitude) {
+        if (location) {
           const url_reverse_geocode = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${location.latitude},${location.longitude}&key=${maps_api_key}`;
           const response = await fetch(url_reverse_geocode);
           const data = await response.json();
@@ -56,6 +59,7 @@ const LocationSelector = ({ navigation }) => {
     })();
   }, [location]);
 
+  /*Handlers de eventos*/
   const onConfirmLocation = () => {
     const updatedLocation = {
       latitude: location.latitude,
@@ -68,7 +72,7 @@ const LocationSelector = ({ navigation }) => {
   };
 
   return (
-    <View style={styles.container}>
+    <Container alignV={location ? "flex-start" : "center"}>
       {location ? (
         <View>
           <CustomText textAlign="center">
@@ -76,7 +80,7 @@ const LocationSelector = ({ navigation }) => {
           </CustomText>
           <MapPreview location={location} />
           <CustomText
-            fontSize={18}
+            fontSize={16}
             style={styles.address}
             textAlign="center"
             color="textPrimary"
@@ -85,30 +89,22 @@ const LocationSelector = ({ navigation }) => {
           </CustomText>
         </View>
       ) : (
-        <View>
-          <CustomText>Error:{error}</CustomText>
+        <View style={styles.mb12}>
+          <CustomText>
+            {error ? `Error: ${error}` : "Loading Address..."}
+          </CustomText>
         </View>
       )}
-      <Pressable style={styles.buyButton} onPress={onConfirmLocation}>
-        <CustomText fontSize={18} color="white">
-          Confirm Address
-        </CustomText>
-      </Pressable>
-    </View>
+      <CustomButton color="primary" onPress={onConfirmLocation}>
+        Confirm Address
+      </CustomButton>
+    </Container>
   );
 };
 
 export default LocationSelector;
 
 const styles = StyleSheet.create({
-  container: {
-    width: "100%",
-    flex: 1,
-    alignItems: "center",
-    gap: 12,
-    backgroundColor: globalStyles.color.white,
-  },
-  image: { height: 100, width: 100 },
   buyButton: {
     backgroundColor: globalStyles.color.primary,
     padding: 12,
@@ -116,5 +112,8 @@ const styles = StyleSheet.create({
   },
   address: {
     padding: 24,
+  },
+  mb12: {
+    marginBottom: 12,
   },
 });

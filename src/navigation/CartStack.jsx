@@ -1,5 +1,4 @@
 import React from "react";
-import { StyleSheet } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Header from "../components/Header";
 import Cart from "../screens/Cart";
@@ -30,5 +29,4 @@ const CartStack = () => {
 
 export default CartStack;
 
-const styles = StyleSheet.create({
-});
+

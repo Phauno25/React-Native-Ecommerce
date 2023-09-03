@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Pressable, StyleSheet, Text, View, Image } from "react-native";
+import { StyleSheet, View, Image } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { setProfilePic } from "../features/user/userSlice";
 import { usePostProfileImageMutation } from "../services/shopServices";
@@ -10,13 +10,20 @@ import {
 } from "expo-image-picker";
 import globalStyles from "../global/globalStyles";
 import CustomText from "../components/CustomText";
+import Container from "../components/Container";
+import CustomButton from "../components/CustomButton";
 
 const ImageSelector = ({ navigation }) => {
-  const [image, setImage] = useState(null);
-  const { localId } = useSelector((state) => state.userReducer.value);
-  const [triggerSaveProfileImg, result] = usePostProfileImageMutation();
+  /*Hooks*/
+  const { localId, profileImage } = useSelector(
+    (state) => state.userReducer.value
+  );
   const dispatch = useDispatch();
+  const [image, setImage] = useState(profileImage);
+  const [dirtyImage, setDirtyImage] = useState(false);
+  const [triggerSaveProfileImg, result] = usePostProfileImageMutation();
 
+  /*Handlers de eventos*/
   const checkCameraPermissions = async () => {
     const { granted } = await requestCameraPermissionsAsync();
     if (!granted) {
@@ -35,9 +42,9 @@ const ImageSelector = ({ navigation }) => {
         base64: true,
         quality: 1,
       });
-
       if (!result.canceled) {
         setImage(result.assets[0].uri);
+        setDirtyImage(true);
       }
     }
   };
@@ -49,30 +56,27 @@ const ImageSelector = ({ navigation }) => {
   };
 
   return (
-    <View style={styles.container}>
+    <Container style={styles.gap}>
       {image ? (
         <>
           <Image source={{ uri: image }} style={styles.image} />
-          <Pressable style={styles.buyButton} onPress={confirmImage}>
-            <CustomText
+
+          <CustomButton
+            onPress={pickImage}
+            fontSize={18}
+            style={{ width: "40%" }}
+          >
+            {dirtyImage ? "Take Other" : "Add Photo"}
+          </CustomButton>
+          {dirtyImage && (
+            <CustomButton
+              onPress={confirmImage}
               fontSize={18}
-              variant="bold"
-              color="white"
-              textAlign="center"
+              style={{ width: "40%" }}
             >
               Confirm
-            </CustomText>
-          </Pressable>
-          <Pressable style={styles.buyButton} onPress={pickImage}>
-            <CustomText
-              fontSize={18}
-              variant="bold"
-              color="white"
-              textAlign="center"
-            >
-              Take Other
-            </CustomText>
-          </Pressable>
+            </CustomButton>
+          )}
         </>
       ) : (
         <>
@@ -83,31 +87,19 @@ const ImageSelector = ({ navigation }) => {
             />
             <CustomText textAlign="center">No image</CustomText>
           </View>
-          <Pressable style={styles.buyButton} onPress={pickImage}>
-            <CustomText
-              fontSize={18}
-              variant="bold"
-              color="white"
-              textAlign="center"
-            >
-              Add a Foto
-            </CustomText>
-          </Pressable>
+
+          <CustomButton onPress={pickImage}>Add a Foto</CustomButton>
         </>
       )}
-    </View>
+    </Container>
   );
 };
 
 export default ImageSelector;
 
 const styles = StyleSheet.create({
-  container: {
-    width: "100%",
-    flex: 1,
-    alignItems: "center",
+  gap: {
     gap: 12,
-    backgroundColor: globalStyles.color.white,
   },
   image: { height: 200, width: 200 },
   buyButton: {

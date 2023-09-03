@@ -1,16 +1,16 @@
-import { View, FlatList, StyleSheet } from "react-native";
+import { FlatList } from "react-native";
 import React from "react";
 import CategoryItem from "../components/CategoryItem";
 import globalStyles from "../global/globalStyles";
-import { useSelector } from "react-redux";
 import { useGetCategoriesQuery } from "../services/shopServices";
+import Container from "../components/Container";
 
 const Home = ({ navigation }) => {
+  /*Hooks*/
+  const { data: categories } = useGetCategoriesQuery();
 
-  const {data:categories,isLoading,isError} = useGetCategoriesQuery();
-  
   return (
-    <View style={styles.container}>
+    <Container alignV="center">
       <FlatList
         contentContainerStyle={globalStyles.defaultFlatList}
         data={categories}
@@ -19,24 +19,8 @@ const Home = ({ navigation }) => {
           <CategoryItem category={item} navigation={navigation} />
         )}
       />
-    </View>
+    </Container>
   );
 };
 
 export default Home;
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    width: "100%",
-    justifyContent: "center",
-    alignContent: "center",
-    backgroundColor: globalStyles.color.white,
-  },
-  headerText: {
-    fontSize: 18,
-    textAlign: "center",
-    color: globalStyles.color.primary,
-    paddingBottom: 6,
-  },
-});

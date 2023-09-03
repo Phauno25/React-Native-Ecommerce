@@ -1,13 +1,14 @@
 const globalStyles = {
   color: {
-    primary: "#41A65A",
-    secondary: "#2d4b68",
-    tertiary: "#DD8F34",
-    background: "#f1f1ed",
-    white: "#fafafa",
+    primary: "#4D7BF3",
+    secondary: "#FFBF00",
+    tertiary: "#FFBF00",
+    surface: "#31394C",
+    background: "#010a20",
     black: "#101010",
-    textPrimary: "#101010",
-    textSecondary:"#4D4D4D"
+    textPrimary: "#fafafa",
+    textSecondary: "#fafafa",
+    textTertiary: "#f0f0f0",
   },
   defaultContainer: {
     flex: 1,
@@ -15,7 +16,12 @@ const globalStyles = {
     justifyContent: "center",
     alignContent: "center",
   },
-  defaultFlatList: { alignItems: "center", justifyContent: "center", gap: 12,paddingTop:12},
+  defaultFlatList: {
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 12,
+    paddingTop: 12,
+  },
   defaultCard: {
     shadowColor: "#000",
     shadowOffset: { width: 3, height: 5 },

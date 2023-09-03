@@ -1,56 +1,110 @@
 import {
   StyleSheet,
-  Text,
   View,
-  Image,
   Pressable,
-  ImageBackground,
+  Image,
 } from "react-native";
 import React from "react";
 import globalStyles from "../global/globalStyles";
 import CustomText from "./CustomText";
-import { MaterialIcons } from "@expo/vector-icons";
-import { removeFromCart } from "../features/cart/cartSlice";
-import { useDispatch } from "react-redux";
+import { Ionicons } from "@expo/vector-icons";
+import {
+  addToCart,
+  removeFromCart,
+  substractFromCart,
+} from "../features/cart/cartSlice";
+import { useDispatch, useSelector } from "react-redux";
 
+/*Card para los items del carrito de compras*/ 
 const CartItem = ({ cartItem }) => {
-
+  
+  /*Estados y reducers*/
   const dispatch = useDispatch();
+  const user = useSelector((state) => state.userReducer.value);
 
+  /* Handlers de eventos */
+  const handleAddCart = () => {
+    dispatch(addToCart({ ...cartItem.product, quantity: 1, user: user }));
+  };
+  const handleSubstractCart = () => {
+    dispatch(
+      substractFromCart({ ...cartItem.product, quantity: 1, user: user })
+    );
+  };
   const handleRemoveCart = () => {
-    dispatch(removeFromCart(cartItem.product.id))
+    dispatch(removeFromCart(cartItem.product.id));
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.content}>
-        <CustomText style={styles.title}>{cartItem.product.title}</CustomText>
-        <CustomText style={styles.title}>
-          x {cartItem.quantity} | $
-          {parseFloat(cartItem.product.price).toFixed(2)}
-        </CustomText>
-        <CustomText style={styles.title}>
-          ${parseFloat(cartItem.product.price * cartItem.quantity).toFixed(2)}
-        </CustomText>
+    <View style={styles.card}>
+      {/*Boton elminar*/}
+      <Pressable style={styles.deleteButton} onPress={handleRemoveCart}>
+        <Ionicons
+          name="close-circle"
+          size={36}
+          color={globalStyles.color.primary}
+        />
+      </Pressable>
+      <View style={styles.main}>
+        {/*Vista de la imagen*/}
+        <View style={styles.imageView}>
+          <Image
+            resizeMode="cover"
+            style={styles.image}
+            source={{ uri: cartItem.product.thumbnail }}
+          ></Image>
+        </View>
+
+        {/*Vista del contenido */}
+        <View style={styles.content}>
+          {/*Titulo y cantidad*/}
+          <View style={styles.header}>
+            <CustomText variant="bold" style={styles.title}>
+              {cartItem.product.title}
+            </CustomText>
+            <CustomText>
+              ${parseFloat(cartItem.product.price).toFixed(2)}
+            </CustomText>
+          </View>
+          {/* Total */}
+          <View style={styles.footer}>
+            <CustomText textAlign="right">Total: </CustomText>
+            <CustomText
+              variant="bold"
+              color="secondary"
+              textAlign="right"
+              fontSize={20}
+            >
+              $
+              {parseFloat(cartItem.product.price * cartItem.quantity).toFixed(
+                2
+              )}
+            </CustomText>
+          </View>
+        </View>
       </View>
-      <View style={styles.imageView}>
-        <ImageBackground
-          resizeMode="cover"
-          style={styles.image}
-          source={{ uri: cartItem.product.thumbnail }}
-        >
-          <Pressable style={styles.iconButton} onPress={handleRemoveCart}>
-            <MaterialIcons
-              name="delete-forever"
-              size={36}
-              color={globalStyles.color.white}
+      {/*Botones abajo de la card y numero de cantidad seleccionada*/}
+      <View style={styles.actions}>
+        <View style={styles.buttonPanel}>
+          <Pressable onPress={handleSubstractCart}>
+            <Ionicons
+              name="remove-circle"
+              size={24}
+              color={globalStyles.color.primary}
             />
           </Pressable>
-        </ImageBackground>
+          <CustomText fontSize={24} style={styles.base}>
+            {cartItem.quantity}
+          </CustomText>
+          <Pressable onPress={handleAddCart}>
+            <Ionicons
+              name="add-circle"
+              size={24}
+              color={globalStyles.color.primary}
+            />
+          </Pressable>
+        </View>
       </View>
-      <CustomText color={"#ffffff"} style={styles.discount}>
-        {cartItem.product.discountPercentage}% OFF
-      </CustomText>
     </View>
   );
 };
@@ -58,46 +112,77 @@ const CartItem = ({ cartItem }) => {
 export default CartItem;
 
 const styles = StyleSheet.create({
-  container: {
-    width: 320,
-    height: 100,
-    backgroundColor: globalStyles.color.background,
+  card: {
+    width: "95%",
+    height: 125,
+  },
+  deleteButton: {
+    position: "absolute",
+    top: -10,
+    right: -10,
+    zIndex: 1,
+  },
+  main: {
+    width: "100%",
+    height: "80%",
     flexDirection: "row",
-    justifyContent: "space-between",
-    padding: 12,
+    backgroundColor: globalStyles.color.surface,
+    borderRadius: 12,
+    borderBottomRightRadius: 0,
   },
   imageView: {
-    width: "40%",
-    justifyContent: "center",
+    width: "30%",
+    height: "100%",
+    justifyContent: "flex-start",
+    alignItems: "flex-start",
+    borderRadius: 12,
   },
   image: {
     width: "100%",
-    height: 100,
-    alignItems: "flex-end",
-    justifyContent: "space-between",
+    height: "100%",
+    borderRadius: 12,
   },
   content: {
+    width: "70%",
     justifyContent: "space-between",
-    width: "60%",
+    padding: 6,
+    gap: 6,
   },
-  topView: {
-    backgroundColor: "white",
-    padding: 5,
-    justifyContent: "space-between",
-    flexDirection: "row-reverse",
+  header: {
+    paddingLeft: 6,
   },
   title: {
     flexWrap: "wrap",
   },
-  discount: {
-    backgroundColor: globalStyles.color.primary,
-    position: "absolute",
-    top: -10,
-    paddingHorizontal: 6,
-    left: 3,
+  footer: {
+    width: "100%",
+    justifyContent: "flex-end",
+    alignItems: "center",
+    flexDirection: "row",
+  },
+  actions: {
+    width: "100%",
+    flexDirection: "row",
+    justifyContent: "flex-end",
+  },
+  buttonPanel: {
+    width: "30%",
+    paddingVertical: 3,
+    paddingHorizontal: 12,
+    backgroundColor: globalStyles.color.surface,
+    flexDirection: "row",
+    justifyContent: "space-evenly",
+    gap: 24,
+    alignItems: "center",
+    borderBottomRightRadius: 12,
+    borderBottomLeftRadius: 12,
   },
   iconButton: {
     padding: 6,
     backgroundColor: "red",
+    position: "absolute",
+    bottom: 2,
+    left: 2,
+    borderRadius: 35,
   },
 });

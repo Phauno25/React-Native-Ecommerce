@@ -1,15 +1,18 @@
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { StyleSheet, View, useWindowDimensions } from "react-native";
 import React, { useEffect, useState } from "react";
 import InputForm from "../components/InputForm";
-import SubmitButton from "../components/SubmitButton";
 import globalStyles from "../global/globalStyles";
 import { useSignUpMutation } from "../services/authServices";
 import { useDispatch } from "react-redux";
-import { setUser } from "../features/user/userSlice";
+import { setUserSession } from "../features/user/userSlice";
 import validations from "../utils/validations";
 import CustomText from "../components/CustomText";
+import CustomButton from "../components/CustomButton";
+import Container from "../components/Container";
 
 const SignupScreen = ({ navigation }) => {
+  /*Hooks*/
+  const dispatch = useDispatch();
   const [email, setEmail] = useState("");
   const [errorMail, setErrorMail] = useState("");
   const [password, setPassword] = useState("");
@@ -18,21 +21,24 @@ const SignupScreen = ({ navigation }) => {
   const [errorConfirmPassword, setErrorConfirmPassword] = useState("");
   const [status, setStatus] = useState("ready");
   const [statusError, setStatusError] = useState("");
-
   const [triggerSignUp, result] = useSignUpMutation();
-  const dispatch = useDispatch();
+  const {width} = useWindowDimensions();
 
   useEffect(() => {
     if (result.isSuccess) {
       dispatch(
-        setUser({
+        setUserSession({
           email: result.data.email,
           idToken: result.data.idToken,
+          localId: resultSignIn.data.localId,
+          profileImage: "",
+          location: {},
         })
       );
     }
   }, [result]);
 
+  /*Handler de eventos*/
   const onSubmit = () => {
     try {
       const isValidVariableEmail = validations.isValidEmail(email);
@@ -82,15 +88,15 @@ const SignupScreen = ({ navigation }) => {
         setErrorConfirmPassword("Passwords must match");
       else setErrorConfirmPassword("");
     } catch (err) {
-      console.log("Catch error");
       console.log(err.message);
     }
   };
 
   return (
-    <View style={styles.main}>
-      <View style={styles.container}>
-        <CustomText style={styles.title}>Signup</CustomText>
+    <Container alignV="center" variant={width <= 350 ? "scrollView" : "view"}>
+      <View style={styles.form}>
+        <CustomText fontSize={18}>Signup</CustomText>
+
         <InputForm label={"email"} onChange={setEmail} error={errorMail} />
         <InputForm
           label={"password"}
@@ -108,47 +114,39 @@ const SignupScreen = ({ navigation }) => {
         {status === "loading" ? (
           <CustomText>Loggin in...</CustomText>
         ) : (
-          <SubmitButton onPress={onSubmit} title="Send" />
+          <CustomButton onPress={onSubmit} style={{ width: "60%" }}>
+            Register
+          </CustomButton>
         )}
 
-        <CustomText style={styles.sub}>Already have an account?</CustomText>
-        <Pressable onPress={() => navigation.navigate("Login")}>
-          <CustomText>Login</CustomText>
-        </Pressable>
+        <CustomText color="textPrimary">Already have an account?</CustomText>
+        <CustomButton
+          variant="link"
+          style={{ border: `solid 3px ${globalStyles.color.secondary}` }}
+          onPress={() => navigation.navigate("Login")}
+        >
+          Login
+        </CustomButton>
       </View>
-    </View>
+    </Container>
   );
 };
 
 export default SignupScreen;
 
 const styles = StyleSheet.create({
-  main: {
-    width: "100%",
-    height: "100%",
-    justifyContent: "center",
-    alignItems: "center",
-  },
   container: {
+    flex: 1,
+  },
+  form: {
     width: "90%",
     flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: globalStyles.lightPink,
-    gap: 15,
+    gap: 12,
     paddingVertical: 20,
     borderRadius: 10,
-  },
-  title: {
-    fontSize: 22,
-  },
-  sub: {
-    fontSize: 14,
-    color: "black",
-  },
-  subLink: {
-    fontSize: 14,
-    color: "blue",
+    backgroundColor: globalStyles.color.background,
   },
   error: {
     fontSize: 16,

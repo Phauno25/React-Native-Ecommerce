@@ -4,11 +4,16 @@ import Card from "./Card";
 import globalStyles from "../global/globalStyles";
 import CustomText from "./CustomText";
 import { setCategorySelected } from "../features/shop/shopSlice";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 
+
+/*Card sencilla para mostrar las diferentes categorias*/
 const CategoryItem = ({ category, navigation }) => {
+  
+  /*Hooks*/
   const dispatch = useDispatch();
 
+  /*Handlers de eventos*/
   const handleCategory = () => {
     dispatch(setCategorySelected(category));
     navigation.navigate("ItemListCategory");
@@ -17,7 +22,7 @@ const CategoryItem = ({ category, navigation }) => {
   return (
     <Pressable onPress={handleCategory}>
       <Card additionalStyle={styles.card}>
-        <CustomText color={globalStyles.color.white} style={styles.text}>
+        <CustomText color={globalStyles.color.background} fontSize={22}>
           {category}
         </CustomText>
       </Card>
@@ -30,12 +35,9 @@ export default CategoryItem;
 const styles = StyleSheet.create({
   card: {
     backgroundColor: globalStyles.color.primary,
-    borderRadius: 12,
+    borderRadius: 25,
     width: 250,
     paddingVertical: 10,
     paddingHorizontal: 15,
-  },
-  text: {
-    fontSize: 22,
   },
 });

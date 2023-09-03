@@ -1,16 +1,30 @@
 import { createSlice } from "@reduxjs/toolkit";
-import products from "../../data/product.json";
-import categories from "../../data/categories.json";
 export const shopSlice = createSlice({
   name: "shop",
   initialState: {
     categorySelected: "",
     productSelected: "",
-    allCategories: categories,
-    allProducts: products,
+    orderSelected: "",
+    allCategories: [],
+    allProducts: [],
+    orders: [],
     productsSelected: [],
+    modalActive: false,
   },
   reducers: {
+    setCategories: (state, actions) => {
+      state.allCategories = actions.payload;
+    },
+    setProducts: (state, actions) => {
+      state.allProducts = actions.payload;
+    },
+    setOrders: (state, actions) => {
+      state.orders = actions.payload;
+    },
+    /*Usado para agregar al state una orden generada durante la sesion activa*/
+    addOrder: (state, actions) => {
+      state.orders = [...state.orders, actions.payload];
+    },
     setCategorySelected: (state, actions) => {
       state.productsSelected = state.allProducts.filter(
         (e) => e.category === actions.payload
@@ -20,9 +34,25 @@ export const shopSlice = createSlice({
     setProductSelected: (state, actions) => {
       state.productSelected = actions.payload;
     },
+    setOrderSelected: (state, action) => {
+      state.orderSelected = action.payload;
+    },
+    /*Utilizado para mostrar el modal dependiendo de la screen en donde se encuentre el usuario*/
+    setModalActive: (state) => {
+      state.modalActive = !state.modalActive;
+    },
   },
 });
 
-export const { setCategorySelected, setProductSelected } = shopSlice.actions;
+export const {
+  setCategorySelected,
+  setProductSelected,
+  setOrderSelected,
+  setModalActive,
+  setCategories,
+  setProducts,
+  setOrders,
+  addOrder,
+} = shopSlice.actions;
 
 export default shopSlice.reducer;

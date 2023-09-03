@@ -1,86 +1,118 @@
-import {
-    StyleSheet,
-    View,
-    Pressable,
-    ImageBackground,
-  } from "react-native";
-  import React from "react";
-  import globalStyles from "../global/globalStyles";
-  import CustomText from "./CustomText";
-  import { MaterialIcons } from "@expo/vector-icons";
-  
-  const OrderItem = ({ orderItem }) => {
-    return (
-      <View style={styles.container}>
-        <View style={styles.content}>
-          <CustomText style={styles.title}>{orderItem.title}</CustomText>
-          <CustomText style={styles.title}>
-            x {orderItem.quantity} | ${parseFloat(orderItem.price * orderItem.quantity).toFixed(2)}
-          </CustomText>
-          <CustomText style={styles.title}>
-            ${parseFloat(orderItem.price * orderItem.quantity).toFixed(2)}
-          </CustomText>
-        </View>
-        <View style={styles.imageView}>
-          <ImageBackground
-            resizeMode="cover"
-            style={styles.image}
-            source={{ uri: orderItem.thumbnail }}
-          >
-            <Pressable style={styles.iconButton}>
-            <MaterialIcons name="delete-forever" size={36} color={globalStyles.color.white} />
-            </Pressable>
-          </ImageBackground>
-        </View>
-        <CustomText color={"#ffffff"} style={styles.discount}>{orderItem.discountPercentage}% OFF</CustomText>
-      </View>
-    );
+import { StyleSheet, View } from "react-native";
+import globalStyles from "../global/globalStyles";
+import CustomText from "./CustomText";
+import CustomButton from "./CustomButton";
+import { useDispatch } from "react-redux";
+import { setModalActive, setOrderSelected } from "../features/shop/shopSlice";
+
+const OrderItem = ({ orderItem: order, setModalVisible }) => {
+  /*Hooks*/
+  const dispatch = useDispatch();
+  /*Vars*/
+  const date = new Date(order.updatedAt).toLocaleDateString("es-AR");
+
+  /* Handlers de eventos*/
+  const handleDetails = () => {
+    dispatch(setOrderSelected(order));
+    dispatch(setModalActive());
   };
-  
-  export default OrderItem;
-  
-  const styles = StyleSheet.create({
-    container: {
-      width: 320,
-      height: 100,
-      backgroundColor: globalStyles.color.background,
-      flexDirection: "row",
-      justifyContent: "space-between",
-      padding:12
-    },
-    imageView: {
-      width: "40%",
-      justifyContent:"center"
-    },
-    image: {
-      width: "100%",
-      height: 100,
-      alignItems:"flex-end",
-      justifyContent:"space-between"
-    },
-    content: {
-      justifyContent: "space-between",
-      width: "60%",
-    },
-    topView: {
-      backgroundColor: "white",
-      padding: 5,
-      justifyContent: "space-between",
-      flexDirection: "row-reverse",
-    },
-    title: {
-      flexWrap: "wrap",
-    },
-    discount:{
-      backgroundColor:globalStyles.color.primary,
-      position:"absolute",
-      top:-10,
-      paddingHorizontal:6,
-      left:3
-    },
-    iconButton:{
-      padding:6,
-      backgroundColor:"red",
-    }
-  });
-  
+
+  return (
+    <View style={styles.card}>
+      <View style={styles.main}>
+        {/*Vista del contenido */}
+        <View style={styles.content}>
+          {/*Titulo y cantidad*/}
+          <View style={styles.header}>
+            <CustomText style={styles.title}>Order n°{order.id}</CustomText>
+            <CustomText color="primary" style={styles.title}>
+              {date}
+            </CustomText>
+          </View>
+          {/* Total */}
+          <View style={styles.footer}>
+            <CustomText variant="bold" fontSize={16} color="secondary">
+              ${parseFloat(order.total).toFixed(2)}
+            </CustomText>
+            <CustomButton onPress={handleDetails}>Details</CustomButton>
+          </View>
+        </View>
+      </View>
+      {/*Botones abajo de la card*/}
+      <View style={styles.actions}></View>
+    </View>
+  );
+};
+
+export default OrderItem;
+
+const styles = StyleSheet.create({
+  card: {
+    width: "95%",
+    height: 150,
+  },
+  deleteButton: {
+    position: "absolute",
+    top: -10,
+    right: -10,
+    zIndex: 1,
+  },
+  main: {
+    width: "100%",
+    height: "80%",
+    flexDirection: "row",
+    backgroundColor: globalStyles.color.surface,
+    borderRadius: 12,
+    padding: 6,
+  },
+  imageView: {
+    width: "30%",
+    height: "100%",
+    justifyContent: "flex-start",
+    alignItems: "flex-start",
+  },
+  image: {
+    width: "100%",
+    height: "100%",
+  },
+  content: {
+    width: "70%",
+    justifyContent: "space-between",
+    padding: 6,
+    gap: 6,
+  },
+  header: {
+    paddingLeft: 6,
+  },
+  title: {
+    flexWrap: "wrap",
+  },
+  footer: {
+    width: "100%",
+    alignItems: "center",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    paddingHorizontal: 6,
+  },
+  actions: {
+    width: "100%",
+  },
+  buttonPanel: {
+    width: "30%",
+    padding: 3,
+    backgroundColor: globalStyles.color.surface,
+    flexDirection: "row",
+    justifyContent: "space-evenly",
+    gap: 24,
+    alignItems: "center",
+    zIndex: 1,
+  },
+  iconButton: {
+    padding: 6,
+    backgroundColor: "red",
+    position: "absolute",
+    bottom: 2,
+    left: 2,
+    borderRadius: 35,
+  },
+});

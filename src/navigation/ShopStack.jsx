@@ -1,9 +1,7 @@
 import React from "react";
-import { StyleSheet, SafeAreaView, Platform, StatusBar } from "react-native";
 import Home from "../screens/Home";
 import ItemListCategory from "../screens/ItemListCategory";
 import ItemDetail from "../screens/ItemDetail";
-import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Header from "../components/Header";
 
@@ -35,5 +33,3 @@ const ShopStack = () => {
 
 export default ShopStack;
 
-const styles = StyleSheet.create({
-});

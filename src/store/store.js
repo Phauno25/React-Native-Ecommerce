@@ -1,5 +1,4 @@
-import { configureStore,getDefaultMiddleware } from "@reduxjs/toolkit";
-import counterReducer from "../features/counter/counterSlice";
+import { configureStore } from "@reduxjs/toolkit";
 import shopReducer from "../features/shop/shopSlice";
 import cartReducer from "../features/cart/cartSlice";
 import userReducer from "../features/user/userSlice"
@@ -9,7 +8,6 @@ import { authApi } from "../services/authServices";
 
 const store = configureStore({
   reducer: {
-    counterReducer,
     shopReducer,
     cartReducer,
     userReducer,

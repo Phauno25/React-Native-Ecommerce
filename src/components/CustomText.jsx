@@ -1,23 +1,29 @@
-import { StyleSheet, Text } from "react-native";
+import { StyleSheet, Text, useWindowDimensions } from "react-native";
 import React, { useEffect, useState } from "react";
 import globalStyles from "../global/globalStyles";
 
-/*Este componente lo hice para reemplazar al Text de react native asi no tengo que andar
-especificando en los estilos de cada Text que font tiene que usar. */
+/*Componente de Texto personalizado para la aplicacion. Aplica la tipografia de la app evitando 
+tener que colocarla en los estilos de cada Text */
 
 const CustomText = ({
-  variant = "semiBold",
+  variant = "semiBold", //variantes de la tipografia
   color = "default",
-  style = {},
+  style = {}, //estilos adicionales en caso de ser necesario
   children,
   fontSize = null,
   textAlign = "left",
 }) => {
+  const { width } = useWindowDimensions();
   const variantStyle = styles[variant] ? styles[variant] : styles["semiBold"];
   const [colorStyle, setColorStyle] = useState({});
-  const fontSizeStyle = fontSize ? { fontSize: fontSize } : "";
+  const fontSizeStyle = fontSize
+    ? { fontSize: fontSize }
+    : width >= 350
+    ? 14
+    : 12;
   const textAlignStyle = { textAlign: textAlign };
 
+  /* Funcion para filtrar en base al color y agregar el estilo correspondiente*/
   useEffect(() => {
     switch (color) {
       case "primary":
@@ -26,16 +32,14 @@ const CustomText = ({
       case "secondary":
         setColorStyle({ color: globalStyles.color.secondary });
         break;
-
       case "textPrimary":
         setColorStyle({ color: globalStyles.color.textPrimary });
         break;
-
       case "textSecondary":
         setColorStyle({ color: globalStyles.color.textSecondary });
         break;
-      case "white":
-        setColorStyle({ color: globalStyles.color.white });
+      case "background":
+        setColorStyle({ color: globalStyles.color.background });
         break;
 
       default:

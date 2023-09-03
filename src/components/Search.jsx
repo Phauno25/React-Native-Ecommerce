@@ -11,9 +11,11 @@ import globalStyles from "../global/globalStyles";
 import CustomText from "./CustomText";
 
 const Search = ({ onSearch, error = "" }) => {
-  const { width, height } = useWindowDimensions();
+  /*Hooks*/
+  const { width } = useWindowDimensions();
   const [inputValue, setInputValue] = useState("");
 
+  /*Handlers de eventos*/
   const handleOnChange = (text) => {
     setInputValue(text);
     onSearch(text);
@@ -25,7 +27,7 @@ const Search = ({ onSearch, error = "" }) => {
   };
 
   return (
-    <View style={width > 350 ? styles.container : ""}>
+    <View style={width > 350 ? styles.pb : ""}>
       <View style={styles.searchBox}>
         <TextInput
           style={width > 350 ? styles.input : styles.inputSm}
@@ -36,8 +38,8 @@ const Search = ({ onSearch, error = "" }) => {
         <Pressable style={styles.searchButton} onPress={() => handleCancel("")}>
           <MaterialIcons
             name="cancel"
-            size={width > 350 ? 24 : 20}
-            color={globalStyles.color.black}
+            size={width > 350 ? 30 : 22}
+            color={globalStyles.color.primary}
           />
         </Pressable>
       </View>
@@ -49,7 +51,7 @@ const Search = ({ onSearch, error = "" }) => {
 export default Search;
 
 const styles = StyleSheet.create({
-  container: {
+  pb: {
     paddingBottom: 12,
   },
   searchBox: {
@@ -64,21 +66,23 @@ const styles = StyleSheet.create({
     width: "85%",
     padding: 8,
     fontSize: 16,
-    backgroundColor: globalStyles.color.white,
+    backgroundColor: globalStyles.color.background,
     borderBottomWidth: 1,
     borderColor: globalStyles.color.textSecondary,
+    color: globalStyles.color.secondary,
   },
   inputSm: {
     width: "60%",
     padding: 8,
-    backgroundColor: globalStyles.color.white,
+    backgroundColor: globalStyles.color.background,
     borderRadius: 10,
+    color: globalStyles.color.primary,
   },
   searchButton: {
     width: "10%",
   },
   errorText: {
-    color: globalStyles.color.secondary,
+    color: "red",
     marginLeft: "5%",
   },
 });

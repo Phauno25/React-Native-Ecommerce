@@ -1,4 +1,3 @@
-import { StyleSheet } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Header from "../components/Header";
 import Profile from "../screens/Profile";
@@ -33,4 +32,3 @@ const ProfileStack = () => {
 
 export default ProfileStack;
 
-const styles = StyleSheet.create({});

@@ -1,27 +1,25 @@
-import { View, StyleSheet, FlatList } from "react-native";
+import { StyleSheet, FlatList } from "react-native";
 import React, { useEffect, useState } from "react";
 import Search from "../components/Search";
 import ProductItem from "../components/ProductItem";
-import globalStyles from "../global/globalStyles";
 import validations from "../utils/validations";
 import CustomText from "../components/CustomText";
 import { useSelector } from "react-redux";
-import { useGetProductsByCategoryQuery } from "../services/shopServices";
+import Container from "../components/Container";
+
+/*Screen que muestra una lista de todos los productos dentro de una categoria*/ 
 
 const ItemListCategory = ({ navigation }) => {
+  /*Hooks*/
   const [keyword, setKeyword] = useState("");
   const [keywordError, setKeywordError] = useState("");
-  const [products,setProducts] = useState([]);
-  
-
+  const [products, setProducts] = useState([]);
   const productsSelected = useSelector(
     (state) => state.shopReducer.productsSelected
   );
-  const categorySelected = useSelector(
-    (state) => state.shopReducer.categorySelected
-  );
-  const {data: productsFiltered,isError,isLoading} = useGetProductsByCategoryQuery(categorySelected)
 
+  /*Utilizamos ese useEffect para filtrar los productos que coincidan con el texto colocado en el 
+  input del componente Search del usuario*/
   useEffect(() => {
     const productsFiltered = productsSelected.filter((product) =>
       product.title.toLowerCase().includes(keyword.toLowerCase())
@@ -29,6 +27,8 @@ const ItemListCategory = ({ navigation }) => {
     setProducts(productsFiltered);
   }, [keyword]);
 
+
+  /*Handlers de eventos*/
   const onSearch = (input) => {
     const evaluation = validations.alphanumericspaces.test(input);
 
@@ -41,10 +41,12 @@ const ItemListCategory = ({ navigation }) => {
   };
 
   return (
-    <View style={styles.container}>
+    <Container>
       <Search onSearch={onSearch} error={keywordError} />
       {products.length == 0 ? (
-        <CustomText style={styles.noResult}>Sin resultados</CustomText>
+        <CustomText fontSize={22} textAlign="center" style={styles.noResult}>
+          Sin resultados
+        </CustomText>
       ) : (
         ""
       )}
@@ -59,18 +61,13 @@ const ItemListCategory = ({ navigation }) => {
         numColumns={2}
         columnWrapperStyle={styles.centeredRow}
       />
-    </View>
+    </Container>
   );
 };
 
 export default ItemListCategory;
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    width: "100%",
-    backgroundColor: globalStyles.color.white,
-  },
   content: {
     paddingHorizontal: 12,
   },
@@ -80,9 +77,7 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   noResult: {
-    fontSize: 24,
     paddingTop: 24,
-    textAlign: "center",
   },
   centeredRow: {
     alignItems: "center",

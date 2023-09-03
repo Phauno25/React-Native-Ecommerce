@@ -26,6 +26,15 @@ export const shopApi = createApi({
         return productTransformed;
       },
     }),
+    getOrdersByUser: builder.query({
+      //user = email of user
+      query: (user) => `orders.json`,
+      transformResponse: (response, meta, param) => {
+        response = Object.values(response);
+        const productsFiltered = response.filter((e) => e.user === param);
+        return productsFiltered;
+      },
+    }),
     postCart: builder.mutation({
       query: (order) => ({
         url: `orders.json`,
@@ -66,4 +75,5 @@ export const {
   usePostProfileImageMutation,
   useGetProfileLocationQuery,
   usePostProfileLocationMutation,
+  useGetOrdersByUserQuery,
 } = shopApi;
