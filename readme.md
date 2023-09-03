@@ -62,7 +62,7 @@ style (obj) (Additional styles)
 ## Run Application
 
 ```bash
-npm i
+npm start
 ```
 
 ## License
