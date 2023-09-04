@@ -74,7 +74,7 @@ const ItemDetail = () => {
               >
                 {product.title}
               </CustomText>
-              <CustomText color="primary">{product.brand}</CustomText>
+              <CustomText color="primary">{product.developer}</CustomText>
             </View>
 
             {/*  Barra de especificaciones */}
