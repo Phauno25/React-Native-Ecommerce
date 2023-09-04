@@ -69,8 +69,7 @@ const ItemDetail = () => {
             <View>
               <CustomText
                 color="secondary"
-                fontSize={width > 350 ? 22 : 14}
-                style={width > 350 ? styles.textTitle : styles.textTitleSM}
+                fontSize={22}
               >
                 {product.title}
               </CustomText>

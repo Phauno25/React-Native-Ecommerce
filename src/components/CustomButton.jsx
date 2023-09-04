@@ -54,7 +54,7 @@ const CustomButton = ({
   return (
     <Pressable onPress={onPress} style={[base, pressableStyle, style]}>
       <CustomText
-        fontSize={fontSize ? fontSize : width >= 350 ? 16 : 14}
+        fontSize={16}
         variant={variant === "link" ? "semibold" : "bold"}
         color={variant === "link" ? "secondary" : "white"}
         textAlign="center"

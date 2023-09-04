@@ -38,7 +38,7 @@ const ProductItem = ({ product, navigation }) => {
         <View style={styles.cardContent}>
           <View>
             <CustomText color="primary" fontSize={width <= 350 ? 12 : ""}>
-              {product.developer}
+              {product.brand}
             </CustomText>
             <CustomText fontSize={width > 350 ? 16 : 14} style={styles.mb4}>
               {product.title}

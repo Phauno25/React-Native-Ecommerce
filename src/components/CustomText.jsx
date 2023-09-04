@@ -1,6 +1,7 @@
 import { StyleSheet, Text, useWindowDimensions } from "react-native";
 import React, { useEffect, useState } from "react";
 import globalStyles from "../global/globalStyles";
+import adjust from "../utils/adjust";
 
 /*Componente de Texto personalizado para la aplicacion. Aplica la tipografia de la app evitando 
 tener que colocarla en los estilos de cada Text */
@@ -10,17 +11,13 @@ const CustomText = ({
   color = "default",
   style = {}, //estilos adicionales en caso de ser necesario
   children,
-  fontSize = null,
+  fontSize = 14,
   textAlign = "left",
 }) => {
   const { width } = useWindowDimensions();
   const variantStyle = styles[variant] ? styles[variant] : styles["semiBold"];
   const [colorStyle, setColorStyle] = useState({});
-  const fontSizeStyle = fontSize
-    ? { fontSize: fontSize }
-    : width >= 350
-    ? 14
-    : 12;
+  const fontSizeStyle = { fontSize: adjust(fontSize) };
   const textAlignStyle = { textAlign: textAlign };
 
   /* Funcion para filtrar en base al color y agregar el estilo correspondiente*/

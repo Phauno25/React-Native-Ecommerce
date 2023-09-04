@@ -34,6 +34,7 @@ const Search = ({ onSearch, error = "" }) => {
           placeholder="Search product..."
           value={inputValue}
           onChangeText={(text) => handleOnChange(text)}
+          placeholderTextColor={globalStyles.color.textSecondary}
         />
         <Pressable style={styles.searchButton} onPress={() => handleCancel("")}>
           <MaterialIcons
@@ -52,7 +53,7 @@ export default Search;
 
 const styles = StyleSheet.create({
   pb: {
-    paddingBottom: 12,
+    backgroundColor:'red'
   },
   searchBox: {
     flexDirection: "row",
@@ -72,10 +73,9 @@ const styles = StyleSheet.create({
     color: globalStyles.color.secondary,
   },
   inputSm: {
-    width: "60%",
+    width: "80%",
     padding: 8,
     backgroundColor: globalStyles.color.background,
-    borderRadius: 10,
     color: globalStyles.color.primary,
   },
   searchButton: {

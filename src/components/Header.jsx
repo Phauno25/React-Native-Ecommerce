@@ -57,7 +57,7 @@ const Header = ({ route, navigation, isBackVisible }) => {
 
       <CustomText
         textAlign="center"
-        fontSize={width <= 350 ? 14 : 20}
+        fontSize={20}
         style={width <= 350 ? styles.textSM : styles.text}
       >
         {title}
