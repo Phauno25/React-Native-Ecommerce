@@ -9,6 +9,7 @@ import validations from "../utils/validations";
 import CustomText from "../components/CustomText";
 import CustomButton from "../components/CustomButton";
 import Container from "../components/Container";
+import { createSession } from "../database";
 
 const SignupScreen = ({ navigation }) => {
   /*Hooks*/
@@ -22,15 +23,27 @@ const SignupScreen = ({ navigation }) => {
   const [status, setStatus] = useState("ready");
   const [statusError, setStatusError] = useState("");
   const [triggerSignUp, result] = useSignUpMutation();
-  const {width} = useWindowDimensions();
+  const { width } = useWindowDimensions();
 
   useEffect(() => {
     if (result.isSuccess) {
+      createSession({
+        localId: result.data.localId,
+        idToken: result.data.idToken,
+        email: result.data.email,
+      })
+        .then((e) => {
+          console.log("Session Created");
+        })
+        .catch((e) => {
+          console.log("Session Error");
+          console.log(e);
+        });
       dispatch(
         setUserSession({
           email: result.data.email,
           idToken: result.data.idToken,
-          localId: resultSignIn.data.localId,
+          localId: result.data.localId,
           profileImage: "",
           location: {},
         })
