@@ -128,9 +128,9 @@ const StatusHandler = ({ navigation }) => {
           />
           <View style={styles.actions}>
             <CustomText variant="bold" color="secondary" fontSize={22}>
-              Total: ${total}
+              Total: ${parseFloat(total).toFixed(2)}
             </CustomText>
-            <CustomButton onPress={handleConfirm}>Buy Now</CustomButton>
+            <CustomButton onPress={ (items.length > 0 & total > 0) ? handleConfirm : ()=>("")}>Buy Now</CustomButton>
           </View>
         </Container>
       );
